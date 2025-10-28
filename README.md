@@ -17,7 +17,7 @@ You can add go-gettext to your Go project by running the following:
 $ go get github.com/pojntfx/go-gettext/...@latest
 ```
 
-Please not that a gettext library (usually named `libintl`) needs to be installed on your system. On Linux this is almost always the case, but on Windows you might want to ship the relevant DLL manually, while macOS requires that you install it with Homebrew or MacPorts. Only Linux is a tested platform at this time.
+Please note that a gettext library (usually named `libintl`) needs to be installed on your system. On Linux this is almost always the case, but on Windows you might want to ship the relevant DLL manually, while macOS requires that you install it with Homebrew or MacPorts. Only Linux is a tested platform at this time.
 
 ## Tutorial
 
@@ -62,7 +62,7 @@ Now that everything is set up, getting a localized string is as easy as calling 
 i18n.Local("Session finished")
 ```
 
-The translated string for "Sessions finished" should be returned by `i18n.Local`, e.g. "Sitzung beended" in German.
+The translated string for "Session finished" should be returned by `i18n.Local`, e.g. "Sitzung beendet" in German.
 
 🚀 That's it! We hope go-gettext helps you with internationalizing your app.
 
