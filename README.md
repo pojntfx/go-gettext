@@ -17,6 +17,8 @@ You can add go-gettext to your Go project by running the following:
 $ go get github.com/pojntfx/go-gettext/...@latest
 ```
 
+Please not that a gettext library (usually named `libintl`) needs to be installed on your system. On Linux this is almost always the case, but on Windows you might want to ship the relevant DLL manually, while macOS requires that you install it with Homebrew or MacPorts. Only Linux is a tested platform at this time.
+
 ## Tutorial
 
 > TL;DR: Extract strings, initialize the i18n system, then call `i18n.Local`
@@ -33,7 +35,7 @@ The resulting `.pot` file can then be translated. The standard `gettext` toolcha
 
 ### 2. Setting up the Internalization System
 
-Next, in an `init` function, import and setup go-gettext:
+Next, in an `init` function or elsewhere, import and setup go-gettext:
 
 ```go
 import "github.com/pojntfx/go-gettext/pkg/i18n"
@@ -66,7 +68,8 @@ The translated string for "Sessions finished" should be returned by `i18n.Local`
 
 ## Acknowledgements
 
-- [ebitengine/purego](https://github.com/ebitengine/purego) allows us to call functions from `gettext` without the need for CGo.
+- [jwijenbergh/purego](https://github.com/jwijenbergh/purego) allows us to call functions from `gettext` without the need for CGo.
+- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) is what I usually use with this library, and was very helpful for learning how to use purego.
 - [diamondburned/gotk4](https://github.com/diamondburned/gotk4) was the inspiration for how the `InitI18n` function should work.
 - [GNU gettext](https://en.wikipedia.org/wiki/Gettext) is the most commonly used implementation of gettext and what go-gettext is usually used with.
 
