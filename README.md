@@ -52,7 +52,61 @@ func init() {
 }
 ```
 
-Adjust `gettextPackage` and `localeDir` to match your local environment. If you're using Meson, see [pojntfx/senbara/senbara-gtk/src/config.go.in](https://github.com/pojntfx/senbara/blob/981fb805eab9c91c56985c92c62dbf4835178c90/senbara-gtk/src/config.go.in) for an example of how to get those dynamically.
+Adjust `gettextPackage` and `localeDir` to match your local environment. If you're using Meson, see [pojntfx/senbara/senbara-gtk/src/config.go.in](https://github.com/pojntfx/senbara/blob/981fb805eab9c91c56985c92c62dbf4835178c90/senbara-gtk/src/config.go.in) for an example of how to get those dynamically. Since `go-gettext` uses the system `gettext` library, using `go:embed` is a bit harder than usual; one (somewhat hacky) solution is to embed the generated `.mo` files and extract them to a temporary directory at runtime like this:
+
+<details>
+  <summary>Expand section</summary>
+
+```go
+//go:embed *
+var FS embed.FS
+
+// ...
+
+i18t, err := os.MkdirTemp("", "")
+if err != nil {
+	panic(err)
+}
+defer os.RemoveAll(i18t)
+
+if err := fs.WalkDir(po.FS, ".", func(path string, d fs.DirEntry, err error) error {
+	if err != nil {
+		return err
+	}
+
+	if d.IsDir() {
+		if err := os.MkdirAll(filepath.Join(i18t, path), os.ModePerm); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	src, err := po.FS.Open(path)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(filepath.Join(i18t, path))
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return nil
+}); err != nil {
+	panic(err)
+}
+
+i18n.InitI18n("default", i18t)
+```
+
+</details>
 
 ### 3. Getting a Localized String
 
