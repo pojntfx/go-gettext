@@ -61,3 +61,6 @@ func InitI18n(domain, dir string) error {
 func Local(input string) string {
 	return gettext(input)
 }
+
+// L is a shorthand for Local
+var L = Local

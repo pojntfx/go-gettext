@@ -28,7 +28,13 @@ Please note that a gettext library (usually named `libintl`) needs to be install
 Just like in any `gettext`-based project, you'll start by extracting strings from your source code. For Go, this works:
 
 ```shell
-find .. -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=i18n.Local --keyword=Local --omit-header -o default.pot --files-from=
+find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=i18n.Local --keyword=Local --omit-header -o default.pot --files-from=
+```
+
+Alternatively, if you're using the `L` shorthand instead of `i18n.Local`:
+
+```shell
+find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=L --omit-header -o default.pot --files-from=
 ```
 
 The resulting `.pot` file can then be translated. The standard `gettext` toolchain can now be used; for a full example (including building and installing the `.mo` files), see [pojntfx/sessions/po](https://github.com/pojntfx/sessions/tree/main/po).
@@ -106,6 +112,8 @@ if err := fs.WalkDir(po.FS, ".", func(path string, d fs.DirEntry, err error) err
 i18n.InitI18n("default", i18t)
 ```
 
+If you're looking for a pure Go library that has support for `go:embed` out of the box, we recommend [leonelquinteros/gotext](https://github.com/leonelquinteros/gotext).
+
 </details>
 
 ### 3. Getting a Localized String
@@ -116,16 +124,25 @@ Now that everything is set up, getting a localized string is as easy as calling 
 i18n.Local("Session finished")
 ```
 
-The translated string for "Session finished" should be returned by `i18n.Local`, e.g. "Sitzung beendet" in German.
+Alternatively you can also use the `L` shorthand like so:
+
+```go
+import . "github.com/pojntfx/go-gettext/pkg/i18n"
+
+L("Session finished")
+```
+
+The translated string for "Session finished" should be returned by `i18n.Local` or `L`, e.g. "Sitzung beendet" in German.
 
 🚀 That's it! We hope go-gettext helps you with internationalizing your app.
 
 ## Acknowledgements
 
 - [jwijenbergh/purego](https://github.com/jwijenbergh/purego) allows us to call functions from `gettext` without the need for CGo.
-- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) is what I usually use with this library, and was very helpful for learning how to use purego.
+- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) is what is commonly used with this library, and was very helpful for learning how to use purego.
 - [diamondburned/gotk4](https://github.com/diamondburned/gotk4) was the inspiration for how the `InitI18n` function should work.
 - [GNU gettext](https://en.wikipedia.org/wiki/Gettext) is the most commonly used implementation of gettext and what go-gettext is usually used with.
+- [leonelquinteros/gotext](https://github.com/leonelquinteros/gotext) is a great, pure Go gettext reimplementation.
 
 ## Contributing
 
