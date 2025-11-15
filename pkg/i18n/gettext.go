@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	setlocale             func(category int, locale string) string
 	bindtextdomain        func(domainname string, dirname string) string
 	bindTextdomainCodeset func(domainname string, codeset string) string
 	textdomain            func(domainname string) string
@@ -27,6 +28,11 @@ func InitI18n(domain, dir string) error {
 		return errors.Join(errors.New("could get gettext library names"), err)
 	}
 
+	lcAll, err := getLCALL()
+	if err != nil {
+		return errors.Join(errors.New("could get LC_ALL value"), err)
+	}
+
 	var libc uintptr
 	for _, gettextLibName := range gettextLibNames {
 		libc, err = openLibrary(gettextLibName)
@@ -37,10 +43,15 @@ func InitI18n(domain, dir string) error {
 		}
 	}
 
+	purego.RegisterLibFunc(&setlocale, libc, "setlocale")
 	purego.RegisterLibFunc(&bindtextdomain, libc, "bindtextdomain")
 	purego.RegisterLibFunc(&bindTextdomainCodeset, libc, "bind_textdomain_codeset")
 	purego.RegisterLibFunc(&textdomain, libc, "textdomain")
 	purego.RegisterLibFunc(&gettext, libc, "gettext")
+
+	if setlocale(lcAll, "") == "" {
+		return errors.New("failed to set locale")
+	}
 
 	if bindtextdomain(domain, dir) == "" {
 		return errors.New("failed to bind text domain")
