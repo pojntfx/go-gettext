@@ -4,8 +4,6 @@ package i18n
 
 import (
 	"errors"
-
-	"github.com/jwijenbergh/purego"
 )
 
 var (
@@ -14,40 +12,27 @@ var (
 	bindTextdomainCodeset func(domainname string, codeset string) string
 	textdomain            func(domainname string) string
 	gettext               func(msgid string) string
+	dgettext              func(domainname string, msgid string) string
 )
 
-// InitI18n initializes the i18n subsystem. It runs the following C code:
+// InitI18n initializes the i18n subsystem and sets the text domain. It runs the following C code:
 //
 //	setlocale(LC_ALL, "");
 //	bindtextdomain(domain, dir);
 //	bind_textdomain_codeset(domain, "UTF-8");
 //	textdomain(domain);
+//
+// Use this for your main application. For libraries that need their own translation
+// domain without changing the global text domain, use BindI18n instead.
 func InitI18n(domain, dir string) error {
-	gettextLibNames, err := getGettextLibraryNames()
-	if err != nil {
-		return errors.Join(errors.New("could get gettext library names"), err)
+	if err := registerLibrary(); err != nil {
+		return errors.Join(errors.New("could register gettext library"), err)
 	}
 
 	lcAll, err := getLCALL()
 	if err != nil {
 		return errors.Join(errors.New("could get LC_ALL value"), err)
 	}
-
-	var libc uintptr
-	for _, gettextLibName := range gettextLibNames {
-		libc, err = openLibrary(gettextLibName)
-		if err != nil {
-			return errors.Join(errors.New("could not open library"), err)
-		} else {
-			break
-		}
-	}
-
-	purego.RegisterLibFunc(&setlocale, libc, "setlocale")
-	purego.RegisterLibFunc(&bindtextdomain, libc, "bindtextdomain")
-	purego.RegisterLibFunc(&bindTextdomainCodeset, libc, "bind_textdomain_codeset")
-	purego.RegisterLibFunc(&textdomain, libc, "textdomain")
-	purego.RegisterLibFunc(&gettext, libc, "gettext")
 
 	if setlocale(lcAll, "") == "" {
 		return errors.New("failed to set locale")
@@ -68,10 +53,53 @@ func InitI18n(domain, dir string) error {
 	return nil
 }
 
-// Local localizes a string using gettext.
+// BindI18n binds a text domain without setting it as the current domain. It runs the following C code:
+//
+//	setlocale(LC_ALL, "");
+//	bindtextdomain(domain, dir);
+//	bind_textdomain_codeset(domain, "UTF-8");
+//
+// This is useful for libraries that need their own translation domain. The library
+// should use LocalDomain or the LD alias to look up strings in its specific domain.
+// This does NOT change the global text domain used by Local/L.
+func BindI18n(domain, dir string) error {
+	if err := registerLibrary(); err != nil {
+		return err
+	}
+
+	lcAll, err := getLCALL()
+	if err != nil {
+		return errors.Join(errors.New("could get LC_ALL value"), err)
+	}
+
+	if setlocale(lcAll, "") == "" {
+		return errors.New("failed to set locale")
+	}
+
+	if bindtextdomain(domain, dir) == "" {
+		return errors.New("failed to bind text domain")
+	}
+
+	if bindTextdomainCodeset(domain, "UTF-8") == "" {
+		return errors.New("failed to set text domain codeset")
+	}
+
+	return nil
+}
+
+// Local localizes a string using gettext with the current text domain.
 func Local(input string) string {
 	return gettext(input)
 }
 
 // L is a shorthand for Local
 var L = Local
+
+// LocalDomain localizes a string using dgettext with a specific text domain.
+// Use this in libraries that have their own translation domain.
+func LocalDomain(domain, input string) string {
+	return dgettext(domain, input)
+}
+
+// LD is a shorthand for LocalDomain
+var LD = LocalDomain
