@@ -21,27 +21,29 @@ Please note that a gettext library (usually named `libintl`) needs to be install
 
 ## Tutorial
 
-> TL;DR: Extract strings, initialize the i18n system, then call `i18n.Local`
+> TL;DR: Extract strings, initialize the i18n system with `InitI18n` (for applications) or `BindI18n` (for libraries), then call `i18n.Local` or `i18n.LocalDomain`
 
 ### 1. Extract Strings
 
 Just like in any `gettext`-based project, you'll start by extracting strings from your source code. For Go, this works:
 
 ```shell
-find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=i18n.Local --keyword=Local --omit-header -o default.pot --files-from=
+find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=i18n.Local --keyword=Local --keyword=i18n.LocalDomain:2 --keyword=LocalDomain:2 --omit-header -o default.pot --files-from=
 ```
 
-Alternatively, if you're using the `L` shorthand instead of `i18n.Local`:
+Alternatively, if you're using the `L` and `LD` shorthands instead of `i18n.Local` and `i18n.LocalDomain`:
 
 ```shell
-find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=L --omit-header -o default.pot --files-from=
+find . -name '*.go' | xgettext --language=C++ --keyword=_ --keyword=L --keyword=LD:2 --omit-header -o default.pot --files-from=
 ```
 
 The resulting `.pot` file can then be translated. The standard `gettext` toolchain can now be used; for a full example (including building and installing the `.mo` files), see [pojntfx/sessions/po](https://github.com/pojntfx/sessions/tree/main/po).
 
 ### 2. Setting up the Internalization System
 
-Next, in an `init` function or elsewhere, import and setup go-gettext:
+#### For Applications
+
+If you're building an application, use `InitI18n` to initialize and set the global text domain:
 
 ```go
 import "github.com/pojntfx/go-gettext/pkg/i18n"
@@ -57,6 +59,29 @@ func init() {
 	}
 }
 ```
+
+#### For Libraries
+
+If you're building a library that needs its own translation domain without changing the global text domain, use `BindI18n` instead:
+
+```go
+import "github.com/pojntfx/go-gettext/pkg/i18n"
+
+const (
+	gettextPackage = "mylib"
+	localeDir      = "/usr/share/locale"
+)
+
+func init() {
+	if err := i18n.BindI18n(gettextPackage, localeDir); err != nil {
+		panic(err)
+	}
+}
+```
+
+When using `BindI18n`, you'll need to use `i18n.LocalDomain` (or `LD`) instead of `i18n.Local` (or `L`) to look up strings in your library's specific domain (see [3. Getting a Localized String](#3-getting-a-localized-string)).
+
+#### Configuration
 
 Adjust `gettextPackage` and `localeDir` to match your local environment. If you're using Meson, see [pojntfx/senbara/senbara-gtk/src/config.go.in](https://github.com/pojntfx/senbara/blob/981fb805eab9c91c56985c92c62dbf4835178c90/senbara-gtk/src/config.go.in) for an example of how to get those dynamically. Since `go-gettext` uses the system `gettext` library, using `go:embed` is a bit harder than usual; one (somewhat hacky) solution is to embed the generated `.mo` files and extract them to a temporary directory at runtime like this:
 
@@ -118,6 +143,8 @@ If you're looking for a pure Go library that has support for `go:embed` out of t
 
 ### 3. Getting a Localized String
 
+#### For Applications (using InitI18n)
+
 Now that everything is set up, getting a localized string is as easy as calling `i18n.Local`:
 
 ```go
@@ -133,6 +160,24 @@ L("Session finished")
 ```
 
 The translated string for "Session finished" should be returned by `i18n.Local` or `L`, e.g. "Sitzung beendet" in German.
+
+#### For Libraries (using BindI18n)
+
+If you're using `BindI18n` in a library, use `i18n.LocalDomain` to look up strings in your specific text domain:
+
+```go
+i18n.LocalDomain("mylib", "Operation completed")
+```
+
+Alternatively you can also use the `LD` shorthand like so:
+
+```go
+import . "github.com/pojntfx/go-gettext/pkg/i18n"
+
+LD("mylib", "Operation completed")
+```
+
+This allows libraries to have their own translation domain without interfering with the application's global text domain.
 
 🚀 That's it! We hope go-gettext helps you with internationalizing your app.
 
