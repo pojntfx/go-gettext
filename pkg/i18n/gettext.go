@@ -34,7 +34,9 @@ func InitI18n(domain, dir string) error {
 		return errors.Join(errors.New("could get LC_ALL value"), err)
 	}
 
-	setlocale(lcAll, "") // We ignore errors here since even if the libc locale is not installed, our local translations will still work
+	if setlocale(lcAll, "") == "" {
+		return errors.New("failed to set locale")
+	}
 
 	if bindtextdomain(domain, dir) == "" {
 		return errors.New("failed to bind text domain")
@@ -70,7 +72,9 @@ func BindI18n(domain, dir string) error {
 		return errors.Join(errors.New("could get LC_ALL value"), err)
 	}
 
-	setlocale(lcAll, "") // We ignore errors here since even if the libc locale is not installed, our local translations will still work
+	if setlocale(lcAll, "") == "" {
+		return errors.New("failed to set locale")
+	}
 
 	if bindtextdomain(domain, dir) == "" {
 		return errors.New("failed to bind text domain")
