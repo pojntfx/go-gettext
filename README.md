@@ -46,7 +46,11 @@ The resulting `.pot` file can then be translated. The standard `gettext` toolcha
 If you're building an application, use `InitI18n` to initialize and set the global text domain:
 
 ```go
-import "github.com/pojntfx/go-gettext/pkg/i18n"
+import (
+	"log/slog"
+
+	"github.com/pojntfx/go-gettext/pkg/i18n"
+)
 
 const (
 	gettextPackage = "sessions"
@@ -54,7 +58,7 @@ const (
 )
 
 func init() {
-	if err := i18n.InitI18n(gettextPackage, localeDir); err != nil {
+	if err := i18n.InitI18n(gettextPackage, localeDir, slog.Default()); err != nil {
 		panic(err)
 	}
 }
@@ -65,7 +69,11 @@ func init() {
 If you're building a library that needs its own translation domain without changing the global text domain, use `BindI18n` instead:
 
 ```go
-import "github.com/pojntfx/go-gettext/pkg/i18n"
+import (
+	"log/slog"
+
+	"github.com/pojntfx/go-gettext/pkg/i18n"
+)
 
 const (
 	gettextPackage = "mylib"
@@ -73,7 +81,7 @@ const (
 )
 
 func init() {
-	if err := i18n.BindI18n(gettextPackage, localeDir); err != nil {
+	if err := i18n.BindI18n(gettextPackage, localeDir, slog.Default()); err != nil {
 		panic(err)
 	}
 }
@@ -134,7 +142,7 @@ if err := fs.WalkDir(po.FS, ".", func(path string, d fs.DirEntry, err error) err
 	panic(err)
 }
 
-i18n.InitI18n("default", i18t)
+i18n.InitI18n("default", i18t, slog.Default())
 ```
 
 If you're looking for a pure Go library that has support for `go:embed` out of the box, we recommend [leonelquinteros/gotext](https://github.com/leonelquinteros/gotext).

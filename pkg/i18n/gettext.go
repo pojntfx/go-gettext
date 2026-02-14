@@ -4,6 +4,7 @@ package i18n
 
 import (
 	"errors"
+	"log/slog"
 )
 
 var (
@@ -24,7 +25,7 @@ var (
 //
 // Use this for your main application. For libraries that need their own translation
 // domain without changing the global text domain, use BindI18n instead.
-func InitI18n(domain, dir string) error {
+func InitI18n(domain, dir string, logger *slog.Logger) error {
 	if err := registerLibrary(); err != nil {
 		return errors.Join(errors.New("could register gettext library"), err)
 	}
@@ -35,7 +36,7 @@ func InitI18n(domain, dir string) error {
 	}
 
 	if setlocale(lcAll, "") == "" {
-		return errors.New("failed to set locale")
+		logger.Debug("failed to set locale, verify that system locale for this LC_ALL value is installed; ignoring and continuing", "LC_ALL", lcAll)
 	}
 
 	if bindtextdomain(domain, dir) == "" {
@@ -62,7 +63,7 @@ func InitI18n(domain, dir string) error {
 // This is useful for libraries that need their own translation domain. The library
 // should use LocalDomain or the LD alias to look up strings in its specific domain.
 // This does NOT change the global text domain used by Local/L.
-func BindI18n(domain, dir string) error {
+func BindI18n(domain, dir string, logger *slog.Logger) error {
 	if err := registerLibrary(); err != nil {
 		return err
 	}
@@ -73,7 +74,7 @@ func BindI18n(domain, dir string) error {
 	}
 
 	if setlocale(lcAll, "") == "" {
-		return errors.New("failed to set locale")
+		logger.Debug("failed to set locale, verify that system locale for this LC_ALL value is installed; ignoring and continuing", "LC_ALL", lcAll)
 	}
 
 	if bindtextdomain(domain, dir) == "" {
