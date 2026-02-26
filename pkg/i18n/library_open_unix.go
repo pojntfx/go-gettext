@@ -4,7 +4,7 @@
 
 package i18n
 
-import "github.com/jwijenbergh/purego"
+import "codeberg.org/puregotk/purego"
 
 func openLibrary(name string) (uintptr, error) {
 	return purego.Dlopen(name, purego.RTLD_NOW|purego.RTLD_GLOBAL)

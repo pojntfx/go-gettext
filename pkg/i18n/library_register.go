@@ -5,7 +5,7 @@ package i18n
 import (
 	"errors"
 
-	"github.com/jwijenbergh/purego"
+	"codeberg.org/puregotk/purego"
 )
 
 var (

@@ -191,8 +191,8 @@ This allows libraries to have their own translation domain without interfering w
 
 ## Acknowledgements
 
-- [jwijenbergh/purego](https://github.com/jwijenbergh/purego) allows us to call functions from `gettext` without the need for CGo.
-- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) is what is commonly used with this library, and was very helpful for learning how to use purego.
+- [jwijenbergh/purego](https://codeberg.org/puregotk/purego) allows us to call functions from `gettext` without the need for CGo.
+- [jwijenbergh/puregotk](https://codeberg.org/puregotk/puregotk) is what is commonly used with this library, and was very helpful for learning how to use purego.
 - [diamondburned/gotk4](https://github.com/diamondburned/gotk4) was the inspiration for how the `InitI18n` function should work.
 - [GNU gettext](https://en.wikipedia.org/wiki/Gettext) is the most commonly used implementation of gettext and what go-gettext is usually used with.
 - [leonelquinteros/gotext](https://github.com/leonelquinteros/gotext) is a great, pure Go gettext reimplementation.

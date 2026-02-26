@@ -2,4 +2,4 @@ module github.com/pojntfx/go-gettext
 
 go 1.25.0
 
-require github.com/jwijenbergh/purego v0.0.0-20251017112123-b71757b9ba42
+require codeberg.org/puregotk/purego v0.0.0-20260224095105-2513c838cb80
