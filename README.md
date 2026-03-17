@@ -17,7 +17,7 @@ You can add go-gettext to your Go project by running the following:
 $ go get github.com/pojntfx/go-gettext/...@latest
 ```
 
-Please note that a gettext library (usually named `libintl`) needs to be installed on your system. On Linux this is almost always the case, but on Windows you might want to ship the relevant DLL manually, while macOS requires that you install it with Homebrew or MacPorts. Only Linux is a tested platform at this time.
+Please note that a gettext library (usually named `libintl`) needs to be installed on your system. On Linux this is almost always the case, but on Windows you might want to ship the relevant DLL manually, while macOS requires that you install it with Homebrew or MacPorts. Only Linux is a tested platform at this time; other platforms are best-effort.
 
 ## Tutorial
 

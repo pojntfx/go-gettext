@@ -11,11 +11,23 @@ import (
 func getGettextLibraryNames() ([]string, error) {
 	switch runtime.GOOS {
 	case "darwin":
-		return []string{
-			filepath.Join("/usr", "local", "lib", "libintl.dylib"),    // Homebrew amd64
-			filepath.Join("/opt", "homebrew", "lib", "libintl.dylib"), // Homebrew arm64
-			filepath.Join("/opt", "local", "lib", "libintl.dylib"),    // MacPorts
-		}, nil
+		switch runtime.GOARCH {
+		case "arm64":
+			return []string{
+				filepath.Join("/opt", "homebrew", "lib", "libintl.dylib"),   // Homebrew arm64
+				filepath.Join("/opt", "homebrew", "lib", "libintl.8.dylib"), // Homebrew arm64
+				filepath.Join("/opt", "local", "lib", "libintl.dylib"),      // MacPorts
+				filepath.Join("/opt", "local", "lib", "libintl.8.dylib"),    // MacPorts
+			}, nil
+
+		default:
+			return []string{
+				filepath.Join("/usr", "local", "lib", "libintl.dylib"),   // Homebrew amd64
+				filepath.Join("/usr", "local", "lib", "libintl.8.dylib"), // Homebrew amd64
+				filepath.Join("/opt", "local", "lib", "libintl.dylib"),   // MacPorts
+				filepath.Join("/opt", "local", "lib", "libintl.8.dylib"), // MacPorts
+			}, nil
+		}
 
 	case "linux":
 		return []string{

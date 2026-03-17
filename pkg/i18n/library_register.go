@@ -22,13 +22,18 @@ func registerLibrary() error {
 		return errors.Join(errors.New("could get gettext library names"), err)
 	}
 
+	var errs []error
 	for _, gettextLibName := range gettextLibNames {
 		libc, err = openLibrary(gettextLibName)
-		if err != nil {
-			return errors.Join(errors.New("could not open gettext library"), err)
-		} else {
+		if err == nil {
 			break
 		}
+
+		errs = append(errs, err)
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(append([]error{errors.New("could not open gettext library")}, errs...)...)
 	}
 
 	purego.RegisterLibFunc(&setlocale, libc, "setlocale")
