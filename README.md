@@ -65,6 +65,8 @@ func init() {
 }
 ```
 
+**Note:** `i18n.Local` and `i18n.LocalDomain` must not be called before `InitI18n` or `BindI18n` has run. In particular, package-level variable initializers run _before_ `init()` functions, so code like `var m = map[int]string{1: i18n.Local("Hello")}` will return untranslated strings and log a warning. Move such calls into `init()` or later to ensure translations are loaded.
+
 #### For Libraries
 
 If you're building a library that needs its own translation domain without changing the global text domain, use `BindI18n` instead:
