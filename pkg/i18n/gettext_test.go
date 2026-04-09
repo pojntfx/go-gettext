@@ -81,7 +81,16 @@ msgstr "Allgemein"`), os.ModePerm); err != nil {
 
 			tc.setup(t, "test", tmpDir)
 
-			assert.Equal(t, "Allgemein", tc.translate("test", "General"), "should be translated")
+			assert.Equal(t, "Allgemein", tc.translate("test", "General"), "should be translated outside of a container")
+
+			testMap := map[int]string{1: tc.translate("test", "General")}
+			assert.Equal(t, "Allgemein", testMap[1], "should be translated inside a map")
+
+			testArray := [1]string{tc.translate("test", "General")}
+			assert.Equal(t, "Allgemein", testArray[0], "should be translated inside an array")
+
+			testSlice := []string{tc.translate("test", "General")}
+			assert.Equal(t, "Allgemein", testSlice[0], "should be translated inside a slice")
 		})
 	}
 }
