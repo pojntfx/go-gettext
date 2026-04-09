@@ -4,6 +4,7 @@ Go `gettext` bindings based on `purego`.
 
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.25-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/go-gettext.svg)](https://pkg.go.dev/github.com/pojntfx/go-gettext)
+[![Go CI](https://github.com/pojntfx/go-gettext/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/go-gettext/actions/workflows/go.yaml)
 
 ## Overview
 
@@ -201,8 +202,16 @@ This allows libraries to have their own translation domain without interfering w
 
 To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
+To build and start a development version of `go-gettext` locally, run the following:
+
+```shell
+$ git clone https://github.com/pojntfx/go-gettext.git
+$ cd go-gettext
+$ go test ./...
+```
+
 ## License
 
-go-gettext (c) 2025 Felicitas Pojtinger and contributors
+go-gettext (c) 2026 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: Apache-2.0
