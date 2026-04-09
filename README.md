@@ -4,7 +4,7 @@ Go `gettext` bindings based on `purego`.
 
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.25-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/go-gettext.svg)](https://pkg.go.dev/github.com/pojntfx/go-gettext)
-[![Go CI](https://github.com/pojntfx/go-gettext/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/go-gettext/actions/workflows/go.yaml)
+[![Go CI](https://github.com/pojntfx/go-gettext/actions/workflows/go.yaml/badge.svg)](https://github.com/pojntfx/go-gettext/actions/workflows/go.yaml)
 
 ## Overview
 
